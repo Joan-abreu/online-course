@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 # <HINT> Import any new Models here
-from .models import Course, Enrollment, Question, Choice, Submission
+from .models import Course, Enrollment, Question, Choice, Submission, Lesson
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
@@ -144,17 +144,23 @@ def show_exam_result(request, course_id, submission_id):
     context = {}
     course = get_object_or_404(Course, pk=course_id)
     submission = get_object_or_404(Submission, pk=submission_id)
-    selected_choices = submission.choices.all()
-    result = 0
-    lesson = ''
-    for selected in selected_choices:
-        lesson = selected.question_id.lesson_id
-        if selected.is_correct:
-            x = 1
+    choices_collection = submission.choices.all()
+    selected_ids = extract_answers(request)
+    grade = 0
+    total_score = 0
+    unique_questions = Question.objects.filter(choice__in=choices_collection).distinct()
+    unique_lesson_ids = unique_questions.values_list('lesson_id', flat=True)
+    lesson = Lesson.objects.filter(id__in=unique_lesson_ids)[:1]
+    for question in unique_questions:
+        if question.is_get_score(selected_ids):
+            grade += question.grade
+        total_score += question.grade
+        
     context = {
         'course': course,
-        'selected_ids': '',
-        'grade': 80,
+        'selected_ids': selected_ids,
+        'grade': grade,
+        'total_score': total_score,
         'lesson':lesson
 
     }
