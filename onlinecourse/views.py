@@ -120,6 +120,7 @@ def submit(request, course_id):
         elem = get_object_or_404(Choice, pk=choice)
         sub.choices.add(elem)
     sub.save()
+    return show_exam_result(request, course_id, sub.id)
 
 
 # <HINT> A example method to collect the selected choices from the exam form from the request object
@@ -140,12 +141,21 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
+    context = {}
     course = get_object_or_404(Course, pk=course_id)
     submission = get_object_or_404(Submission, pk=submission_id)
     selected_choices = submission.choices.all()
     result = 0
+    lesson = ''
     for selected in selected_choices:
+        lesson = selected.question_id.lesson_id
         if selected.is_correct:
+            x = 1
+    context = {
+        'course': course,
+        'selected_ids': '',
+        'grade': 80,
+        'lesson':lesson
 
-
-
+    }
+    return render(request, 'onlinecourse/exam_result_bootstrap.html', context)

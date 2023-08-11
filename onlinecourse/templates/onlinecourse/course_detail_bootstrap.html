@@ -51,7 +51,7 @@
                         {% if user.is_authenticated %}
                             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#exam-{{lesson.id}}" aria-expanded="false" aria-controls="exam-{{lesson.id}}">Start Exam</button>
                             <div class="collapse" id="exam-{{lesson.id}}">
-                                <form id="questionform" action="point to a submit view" method="post">
+                                <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
                                     {% for question in lesson.question_set.all %}
                                     <div class="card mt-1">
                                         <div class="card-header"><h5>{{ question.question_text}}</h5></div>
