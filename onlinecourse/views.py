@@ -161,7 +161,6 @@ def show_exam_result(request, course_id, submission_id):
         'selected_ids': selected_ids,
         'grade': grade,
         'total_score': total_score,
-        'lesson':lesson
-
+        'questions': unique_questions,
     }
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
